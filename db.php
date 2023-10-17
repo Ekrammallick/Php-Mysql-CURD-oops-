@@ -84,8 +84,39 @@ class DB
             return false;
         }
     }
-    public function select(){
-            
+    public function select($table,$row="*",$join=null,$where=null,$limit=null,$order=null,$and=null,){
+            if($this->table_exists($table)){
+                  $sql="SELECT $row FROM $table";
+                  if($join !=null){
+                    $sql .=" JOIN $join";
+                  }
+                  if($where !=null){
+                    $sql .=" WHERE $where";
+                  }
+                  if($order !=null){
+                    $sql .=" ORDER $order";
+                  }
+                  if($limit !=null){
+                    $sql .=" LIMIT 0,$limit";
+                  }
+                  if($and !=null){
+                    $sql .=" AND,$and";
+                  }
+                
+                  $this->sql($sql);
+            }else{
+                return false;
+            }
+    }
+    public function sql($sql){
+       $query=$this->mysqli->query($sql);
+       if($query){
+        $this->result=$query->fetch_all(MYSQLI_ASSOC);
+        return true;
+       }else{
+        array_push($this->result,$this->mysqli->error);
+        return false;
+       }
     }
     public function __destruct()
     {
