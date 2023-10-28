@@ -97,7 +97,13 @@ class DB
                     $sql .=" ORDER $order";
                   }
                   if($limit !=null){
-                    $sql .=" LIMIT 0,$limit";
+                    if(isset($_GET['page'])){
+                        $page=$_GET['page'];
+                    }else{
+                        $page=1;
+                    }
+                    $start=($page-1)*$limit;
+                    $sql .=" LIMIT  $start,$limit";
                   }
                   if($and !=null){
                     $sql .=" AND,$and";
