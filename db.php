@@ -84,7 +84,7 @@ class DB
             return false;
         }
     }
-    public function select($table,$row="*",$join=null,$where=null,$limit=null,$order=null,$and=null,){
+    public function select($table,$row="*",$join=null,$where=null,$limit=null,$order=null,$and=null){
             if($this->table_exists($table)){
                   $sql="SELECT $row FROM $table";
                   if($join !=null){
@@ -146,7 +146,46 @@ class DB
             return false;
         }
     }
-
+    public function pagination($table,$join=null,$where=null,$limit=null){
+        if($this->table_exists($table)){
+               if($limit !=null){
+                $sql="SELECT COUNT(*) FROM $table";
+                if($join !=null){
+                    $sql .="JOIN $join";
+                }
+                if($where !=null){
+                    $sql .="WHERE $where";
+                }
+                $query=$this->mysqli->query($sql);
+                $total_record =$query->fetch_array();
+                $total_record = $total_record[0];
+                $total_page= ceil($total_record / $limit);
+                $url = basename($_SERVER['PHP_SELF']);
+                if(isset($_GET['page'])){
+                    $page=$_GET['page'];
+                }else{
+                    $page=1;
+                }
+                 $output="<ul class='pagination'>";
+                 if($total_record > $limit){
+                         for($i=1;$i<=$total_page;$i++){
+                            if($i == $page){
+                                $cls="class='active'";
+                            }else{
+                                $cls="";
+                            }
+                            $output .="<li><a $cls href='$url?page=$i'>$i</a></li>";
+                         }
+                 }
+                 $output .=  "</ul>";
+                echo $output;
+               }else{
+                return false;
+               }
+        }else{
+            return false;
+        }
+    }
     public function get_result()
     {
         $val = $this->result;
